@@ -213,7 +213,6 @@ def main():
             DESIRED_SPECIALTY: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_desired_specialty)],
             BUDGET: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_budget)],
             WHEN: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_when)],
-            CONCERN: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_concern)],
             USERNAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_username)],
         },
         fallbacks=[CommandHandler("cancel", cancel)],
