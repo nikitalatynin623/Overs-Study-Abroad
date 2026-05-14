@@ -13,8 +13,8 @@ from telegram.ext import (
 # НАСТРОЙКИ
 # ========================
 TOKEN = "8978334273:AAGFl5g-HFmUBl9Hi14vPdH2MEscRuKyWZU"
-ADMIN_ID = 7720566946        # Твой личный ID
-GROUP_ID = -5167772662       # ID группы с Есенией (добавлен минус — для групп обязательно)
+ADMIN_ID = 7720566946
+GROUP_ID = -5167772662
 
 # ========================
 # ШАГИ АНКЕТЫ
@@ -23,15 +23,11 @@ GROUP_ID = -5167772662       # ID группы с Есенией (добавле
     NAME, COUNTRY,
     EDUCATION, SPECIALTY, CERTIFICATES,
     PROGRAM, LANGUAGE, DESIRED_SPECIALTY,
-    BUDGET, WHEN,
-    USERNAME
+    BUDGET, WHEN, USERNAME
 ) = range(11)
 
 logging.basicConfig(level=logging.INFO)
 
-# ========================
-# СТАРТ
-# ========================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.clear()
     await update.message.reply_text(
@@ -42,16 +38,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     return NAME
 
-# ========================
-# БЛОК 1 — ЗНАКОМСТВО
-# ========================
 async def get_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["name"] = update.message.text
     await update.message.reply_text("🌍 Из какой ты страны и города?")
     return COUNTRY
 
-async def get_age(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data["age"] = update.message.text
+async def get_country(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["country"] = update.message.text
     keyboard = [["Школьник", "Бакалавр", "Магистр"]]
     await update.message.reply_text(
         "🎓 Какой у тебя уровень образования?",
@@ -59,9 +52,6 @@ async def get_age(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     return EDUCATION
 
-# ========================
-# БЛОК 2 — ОБРАЗОВАНИЕ
-# ========================
 async def get_education(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["education"] = update.message.text
     await update.message.reply_text(
@@ -70,11 +60,11 @@ async def get_education(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     return SPECIALTY
 
-async def get_gpa(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data["gpa"] = update.message.text
+async def get_specialty(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["specialty"] = update.message.text
     await update.message.reply_text(
         "📜 Есть ли языковые сертификаты?\n"
-        "(IELTS, TOPIK, TOEFL и т.д. — если да, укажи уровень. Если нет — напиши «нет»)"
+        "(IELTS, TOPIK, TOEFL — если да, укажи уровень. Если нет — напиши «нет»)"
     )
     return CERTIFICATES
 
@@ -87,9 +77,6 @@ async def get_certificates(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     return PROGRAM
 
-# ========================
-# БЛОК 3 — ЦЕЛИ
-# ========================
 async def get_program(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["program"] = update.message.text
     keyboard = [["Английский", "Корейский", "Оба"]]
@@ -116,9 +103,6 @@ async def get_desired_specialty(update: Update, context: ContextTypes.DEFAULT_TY
     )
     return BUDGET
 
-# ========================
-# БЛОК 4 — ФИНАНСЫ
-# ========================
 async def get_budget(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["budget"] = update.message.text
     keyboard = [["2026", "2027", "2028", "Пока не знаю"]]
@@ -128,14 +112,10 @@ async def get_budget(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     return WHEN
 
-
-# ========================
-# БЛОК 5 — ФИНАЛ
-# ========================
-async def get_concern(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data["concern"] = update.message.text
+async def get_when(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["when"] = update.message.text
     await update.message.reply_text(
-        "📩 Последний вопрос! Оставь свой Telegram username или номер телефона чтобы мы могли с тобой связаться\n"
+        "📩 Последний вопрос! Оставь свой Telegram username или номер телефона\n"
         "(например @username)"
     )
     return USERNAME
@@ -144,7 +124,6 @@ async def get_username(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["contact"] = update.message.text
     d = context.user_data
 
-    # Формируем сообщение
     message = (
         f"📋 *Новая заявка — Overs Study Abroad*\n\n"
         f"👤 *Имя:* {d.get('name')}\n"
@@ -157,36 +136,19 @@ async def get_username(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"📖 *Желаемая специальность:* {d.get('desired_specialty')}\n\n"
         f"💰 *Бюджет в год:* {d.get('budget')}\n"
         f"📅 *Когда поступать:* {d.get('when')}\n\n"
-        f"😟 *Главное беспокойство:* {d.get('concern')}\n\n"
         f"📩 *Telegram:* {d.get('contact')}"
     )
 
-    # Отправляем тебе в личку
-    await context.bot.send_message(
-        chat_id=ADMIN_ID,
-        text=message,
-        parse_mode="Markdown"
-    )
+    await context.bot.send_message(chat_id=ADMIN_ID, text=message, parse_mode="Markdown")
+    await context.bot.send_message(chat_id=GROUP_ID, text=message, parse_mode="Markdown")
 
-    # Отправляем в группу с Есенией
-    await context.bot.send_message(
-        chat_id=GROUP_ID,
-        text=message,
-        parse_mode="Markdown"
-    )
-
-    # Благодарим пользователя
     await update.message.reply_text(
         "✅ Отлично! Мы получили Вашу анкету и свяжемся в ближайшее время.\n\n"
         "Спасибо что выбрали Overs Study Abroad! 🎓🇰🇷",
         reply_markup=ReplyKeyboardRemove()
     )
-
     return ConversationHandler.END
 
-# ========================
-# ОТМЕНА
-# ========================
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "Анкета отменена. Напиши /start чтобы начать заново.",
@@ -194,9 +156,6 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     return ConversationHandler.END
 
-# ========================
-# ЗАПУСК
-# ========================
 def main():
     app = Application.builder().token(TOKEN).build()
 
@@ -219,7 +178,7 @@ def main():
     )
 
     app.add_handler(conv_handler)
-    print("Бот запущен! Нажми Ctrl+C для остановки.")
+    print("Бот запущен!")
     app.run_polling()
 
 if __name__ == "__main__":
