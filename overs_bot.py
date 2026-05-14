@@ -149,10 +149,8 @@ async def get_username(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"📋 *Новая заявка — Overs Study Abroad*\n\n"
         f"👤 *Имя:* {d.get('name')}\n"
         f"🌍 *Страна/город:* {d.get('country')}\n"
-        f"🎂 *Возраст:* {d.get('age')}\n\n"
         f"🎓 *Образование:* {d.get('education')}\n"
         f"📚 *Специальность:* {d.get('specialty')}\n"
-        f"⭐️ *Средний балл:* {d.get('gpa')}\n"
         f"📜 *Сертификаты:* {d.get('certificates')}\n\n"
         f"🎯 *Программа:* {d.get('program')}\n"
         f"🗣 *Язык обучения:* {d.get('language')}\n"
@@ -207,10 +205,8 @@ def main():
         states={
             NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_name)],
             COUNTRY: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_country)],
-            AGE: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_age)],
             EDUCATION: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_education)],
             SPECIALTY: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_specialty)],
-            GPA: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_gpa)],
             CERTIFICATES: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_certificates)],
             PROGRAM: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_program)],
             LANGUAGE: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_language)],
