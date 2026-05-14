@@ -20,11 +20,11 @@ GROUP_ID = -5167772662       # ID группы с Есенией (добавле
 # ШАГИ АНКЕТЫ
 # ========================
 (
-    NAME, COUNTRY, AGE,
-    EDUCATION, SPECIALTY, GPA, CERTIFICATES,
+    NAME, COUNTRY,
+    EDUCATION, SPECIALTY, CERTIFICATES,
     PROGRAM, LANGUAGE, DESIRED_SPECIALTY,
     BUDGET, WHEN,
-    CONCERN, USERNAME
+    USERNAME
 ) = range(14)
 
 logging.basicConfig(level=logging.INFO)
@@ -36,7 +36,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.clear()
     await update.message.reply_text(
         "👋 Привет! Это анкета для бесплатного разбора твоего профиля от Overs Study Abroad.\n\n"
-        "Мы подберём подходящие университеты и расскажем о твоих шансах на поступление.\n\n"
+        "Мы расскажем о твоих шансах на поступление.\n\n"
         "Давай начнём! Как тебя зовут?",
         reply_markup=ReplyKeyboardRemove()
     )
@@ -49,11 +49,6 @@ async def get_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["name"] = update.message.text
     await update.message.reply_text("🌍 Из какой ты страны и города?")
     return COUNTRY
-
-async def get_country(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data["country"] = update.message.text
-    await update.message.reply_text("🎂 Сколько тебе лет?")
-    return AGE
 
 async def get_age(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["age"] = update.message.text
@@ -74,11 +69,6 @@ async def get_education(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=ReplyKeyboardRemove()
     )
     return SPECIALTY
-
-async def get_specialty(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data["specialty"] = update.message.text
-    await update.message.reply_text("⭐️ Какой у тебя средний балл / GPA?")
-    return GPA
 
 async def get_gpa(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["gpa"] = update.message.text
@@ -119,7 +109,7 @@ async def get_language(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def get_desired_specialty(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["desired_specialty"] = update.message.text
-    keyboard = [["до $5K", "$5–10K", "выше $10K", "Ищу стипендию"]]
+    keyboard = [["до $5K", "Не ограничен", "Ищу стипендию"]]
     await update.message.reply_text(
         "💰 Какой бюджет на обучение в год?",
         reply_markup=ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
@@ -131,20 +121,13 @@ async def get_desired_specialty(update: Update, context: ContextTypes.DEFAULT_TY
 # ========================
 async def get_budget(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["budget"] = update.message.text
-    keyboard = [["2025", "2026", "Пока не знаю"]]
+    keyboard = [["2026", "2027", "2028", "Пока не знаю"]]
     await update.message.reply_text(
         "📅 Когда планируешь поступать?",
         reply_markup=ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
     )
     return WHEN
 
-async def get_when(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data["when"] = update.message.text
-    await update.message.reply_text(
-        "😟 Что тебя беспокоит больше всего в процессе поступления?",
-        reply_markup=ReplyKeyboardRemove()
-    )
-    return CONCERN
 
 # ========================
 # БЛОК 5 — ФИНАЛ
@@ -152,7 +135,7 @@ async def get_when(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def get_concern(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["concern"] = update.message.text
     await update.message.reply_text(
-        "📩 Последний вопрос! Оставь свой Telegram username чтобы мы могли с тобой связаться\n"
+        "📩 Последний вопрос! Оставь свой Telegram username или номер телефона чтобы мы могли с тобой связаться\n"
         "(например @username)"
     )
     return USERNAME
@@ -196,8 +179,8 @@ async def get_username(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Благодарим пользователя
     await update.message.reply_text(
-        "✅ Отлично! Мы получили твою анкету и свяжемся с тобой в ближайшее время.\n\n"
-        "Спасибо что выбрал Overs Study Abroad! 🎓🇰🇷",
+        "✅ Отлично! Мы получили Вашу анкету и свяжемся в ближайшее время.\n\n"
+        "Спасибо что выбрали Overs Study Abroad! 🎓🇰🇷",
         reply_markup=ReplyKeyboardRemove()
     )
 
