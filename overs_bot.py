@@ -25,7 +25,7 @@ GROUP_ID = -5167772662       # ID группы с Есенией (добавле
     PROGRAM, LANGUAGE, DESIRED_SPECIALTY,
     BUDGET, WHEN,
     USERNAME
-) = range(14)
+) = range(11)
 
 logging.basicConfig(level=logging.INFO)
 
