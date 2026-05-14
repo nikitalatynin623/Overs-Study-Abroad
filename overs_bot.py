@@ -28,16 +28,27 @@ GROUP_ID = -5167772662
 
 logging.basicConfig(level=logging.INFO)
 
+# ========================
+# ПРИВЕТСТВИЕ ПРИ СТАРТЕ
+# ========================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.clear()
     await update.message.reply_text(
-        "👋 Привет! Это анкета для бесплатного разбора твоего профиля от Overs Study Abroad.\n\n"
-        "Мы расскажем о твоих шансах на поступление.\n\n"
+        "🎓 Добро пожаловать в Overs Study Abroad!\n\n"
+        "Мы помогаем студентам из СНГ поступить в университеты за рубежом.\n\n"
+        "Заполни короткую анкету — и мы бесплатно разберём твой профиль и расскажем о шансах на поступление 🇰🇷\n\n"
+        "Нажми 👇 /start чтобы начать",
+        reply_markup=ReplyKeyboardRemove()
+    )
+    await update.message.reply_text(
         "Давай начнём! Как тебя зовут?",
         reply_markup=ReplyKeyboardRemove()
     )
     return NAME
 
+# ========================
+# БЛОК 1 — ЗНАКОМСТВО
+# ========================
 async def get_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["name"] = update.message.text
     await update.message.reply_text("🌍 Из какой ты страны и города?")
@@ -52,13 +63,27 @@ async def get_country(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     return EDUCATION
 
+# ========================
+# БЛОК 2 — ОБРАЗОВАНИЕ
+# ========================
 async def get_education(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["education"] = update.message.text
-    await update.message.reply_text(
-        "📚 Какая у тебя специальность или направление?",
-        reply_markup=ReplyKeyboardRemove()
-    )
-    return SPECIALTY
+
+    # Если школьник — пропускаем специальность
+    if update.message.text == "Школьник":
+        context.user_data["specialty"] = "Школьник (нет специальности)"
+        await update.message.reply_text(
+            "📜 Есть ли языковые сертификаты?\n"
+            "(IELTS, TOPIK, TOEFL — если да, укажи уровень. Если нет — напиши «нет»)",
+            reply_markup=ReplyKeyboardRemove()
+        )
+        return CERTIFICATES
+    else:
+        await update.message.reply_text(
+            "📚 Какая у тебя специальность или направление?",
+            reply_markup=ReplyKeyboardRemove()
+        )
+        return SPECIALTY
 
 async def get_specialty(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["specialty"] = update.message.text
@@ -77,14 +102,29 @@ async def get_certificates(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     return PROGRAM
 
+# ========================
+# БЛОК 3 — ЦЕЛИ
+# ========================
 async def get_program(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["program"] = update.message.text
-    keyboard = [["Английский", "Корейский", "Оба"]]
-    await update.message.reply_text(
-        "🗣 На каком языке готов учиться?",
-        reply_markup=ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
-    )
-    return LANGUAGE
+
+    # Если языковая школа — пропускаем язык и специальность
+    if update.message.text == "Языковая школа":
+        context.user_data["language"] = "Корейский (языковая школа)"
+        context.user_data["desired_specialty"] = "Языковая школа (не применимо)"
+        keyboard = [["до $5K", "Не ограничен", "Ищу стипендию"]]
+        await update.message.reply_text(
+            "💰 Какой бюджет на обучение в год?",
+            reply_markup=ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
+        )
+        return BUDGET
+    else:
+        keyboard = [["Английский", "Корейский", "Оба"]]
+        await update.message.reply_text(
+            "🗣 На каком языке готов учиться?",
+            reply_markup=ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
+        )
+        return LANGUAGE
 
 async def get_language(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["language"] = update.message.text
@@ -103,6 +143,9 @@ async def get_desired_specialty(update: Update, context: ContextTypes.DEFAULT_TY
     )
     return BUDGET
 
+# ========================
+# БЛОК 4 — ФИНАНСЫ
+# ========================
 async def get_budget(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["budget"] = update.message.text
     keyboard = [["2026", "2027", "2028", "Пока не знаю"]]
@@ -116,10 +159,14 @@ async def get_when(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["when"] = update.message.text
     await update.message.reply_text(
         "📩 Последний вопрос! Оставь свой Telegram username или номер телефона\n"
-        "(например @username)"
+        "(например @username)",
+        reply_markup=ReplyKeyboardRemove()
     )
     return USERNAME
 
+# ========================
+# ФИНАЛ
+# ========================
 async def get_username(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["contact"] = update.message.text
     d = context.user_data
