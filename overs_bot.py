@@ -12,7 +12,7 @@ from telegram.ext import (
 # ========================
 # НАСТРОЙКИ
 # ========================
-TOKEN = "978334273:AAGFl5g-HFmUBl9Hi14vPdH2MEscRuKyWZU"
+TOKEN = "8978334273:AAGFl5g-HFmUBl9Hi14vPdH2MEscRuKyWZU"
 ADMIN_ID = 7720566946        # Твой личный ID
 GROUP_ID = -5167772662       # ID группы с Есенией (добавлен минус — для групп обязательно)
 
